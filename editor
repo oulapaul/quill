@@ -1,0 +1,71 @@
+// App.js or QuillEditor.js  
+import React, { useEffect, useRef, useState } from 'react';  
+import Quill from 'quill';  
+import 'quill/dist/quill.snow.css'; // Import Quill's styles  
+import './App.css'; // Optional: Assuming you'll use this for additional styles  
+
+const QuillEditor = () => {  
+    const editorRef = useRef(null);  
+    const [editorContent, setEditorContent] = useState('');  
+
+    useEffect(() => {  
+        const quill = new Quill(editorRef.current, {  
+            theme: 'snow',  
+            modules: {  
+                toolbar: [  
+                    [{ 'header': [1, 2, false] }],  
+                    ['bold', 'italic', 'underline'],  
+                    ['image', 'code-block'],  
+                    ['clean'] // remove formatting button  
+                ]  
+            }  
+        });  
+
+        // Update the state whenever the content changes  
+        quill.on('text-change', () => {  
+            setEditorContent(quill.root.innerHTML); // Save the content in state  
+        });  
+
+        // Cleanup when component unmounts  
+        return () => {  
+            quill.disable();  
+        };  
+    }, []);  
+
+    return (  
+        <div className="quill-editor-container">  
+            <h1>React Quill Editor</h1>  
+            <div ref={editorRef} className="quill-editor" />  
+            <h3>Content:</h3>  
+            <div className="content-preview" dangerouslySetInnerHTML={{ __html: editorContent || 'Start typing...' }} />  
+        </div>  
+    );  
+};  
+
+export default QuillEditor;  
+
+// App.css  
+.quill-editor-container {  
+    max-width: 800px;  
+    margin: 20px auto;  
+    padding: 10px;  
+    border-radius: 8px;  
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
+}  
+
+h1 {  
+    text-align: center;  
+    margin-bottom: 20px;  
+}  
+
+.quill-editor {  
+    height: 400px; /* Set height of the editor */  
+}  
+
+.content-preview {  
+    border: 1px solid #ccc;  
+    padding: 10px;  
+    border-radius: 5px;  
+    margin-top: 20px;  
+    min-height: 100px; /* Minimum height for content preview */  
+}
